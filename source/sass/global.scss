@@ -1,0 +1,45 @@
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+a {
+  position: relative;
+  text-decoration: none;
+
+  &::after {
+    position: absolute;
+    content: "";
+    left: 50%;
+    bottom: -3px;
+    width: 0;
+    height: 1px;
+    transition: 0.3s;
+    background: black;
+  }
+
+  &:hover {
+    color: black;
+
+    &::after {
+      left: 0;
+      width: 100%;
+    }
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+body {
+  padding: 30px;
+  font-size: 24px;
+  font-family: "Candara", "Arial", sans-serif;
+}
