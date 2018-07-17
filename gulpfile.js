@@ -102,7 +102,7 @@ gulp.task("build", function (done) {
     "images",
     "webp",
     "html",
-    "minify",
+    // "minify",
     done
   );
 });

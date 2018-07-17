@@ -3,10 +3,20 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  padding: 30px;
 }
 
 .content__about-name {
-  font-size: 40px;
+  margin-bottom: 0;
+
+  svg text {
+    fill: black;
+    stroke: black;
+    fill-opacity: 1;
+    stroke-width: 0;
+    stroke-dasharray: 100% 0;
+    animation: stroke-offset 3s ease-out;
+  }
 }
 
 .content__about-list {
@@ -17,7 +27,7 @@
 }
 
 .content__about-item {
-  margin-right: 10px;
+  margin-right: 20px;
 }
 
 .content__project-list {
