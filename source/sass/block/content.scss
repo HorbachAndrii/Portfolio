@@ -30,23 +30,51 @@
   margin-right: 20px;
 }
 
+.content__project {
+  width: 90%;
+}
+
 .content__project-list {
   display: flex;
   flex-wrap: wrap;
-  margin: -30px;
+  margin: 0 -30px -30px 0;
   padding: 0;
   list-style: none;
 }
 
 .content__project-item {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  flex-grow: 1;
   position: relative;
   width: 300px;
-  margin: 30px;
+  max-width: 300px;
+  margin: 0 30px 30px 0;
   padding: 20px;
   border: 1px solid #cccccc;
   border-radius: 3px;
 
   h3 {
-    text-align: center;
+    margin: 0;
+  }
+
+  p {
+    font-size: 22px;
+    color: #333333;
+  }
+
+  a {
+    margin-top: auto;
+    font-size: 20px;
+
+    &::after {
+      left: 20%;
+    }
+
+    &:hover::after {
+      left: 0;
+      width: 42%;
+    }
   }
 }
