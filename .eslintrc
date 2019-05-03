@@ -1,7 +1,10 @@
 root: true
 
+parserOptions:
+  ecmaVersion: 2018
+
 env:
   browser: true
 
 extends:
-  "htmlacademy/es5"
+  'htmlacademy/es6'

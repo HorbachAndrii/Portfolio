@@ -1,112 +1,95 @@
-"use strict";
+/* eslint-disable no-undef */
+'use strict';
 
-var gulp = require("gulp");
-var sass = require("gulp-sass");
-var plumber = require("gulp-plumber");
-var postcss = require("gulp-postcss");
-var posthtml = require("gulp-posthtml");
-var autoprefixer = require("autoprefixer");
-var htmlmin = require("gulp-htmlmin");
-var minify = require("gulp-csso");
-var rename = require("gulp-rename");
-var imagemin = require("gulp-imagemin");
-var webp = require("gulp-webp");
-var include = require("posthtml-include");
-var run = require("run-sequence");
-var del = require("del");
-var uglify = require("gulp-uglify");
-var server = require("browser-sync").create();
+const gulp = require(`gulp`);
+const sass = require(`gulp-sass`);
+const plumber = require(`gulp-plumber`);
+const postcss = require(`gulp-postcss`);
+const sourcemap = require(`gulp-sourcemaps`);
+const posthtml = require(`gulp-posthtml`);
+const autoprefixer = require(`autoprefixer`);
+const htmlmin = require(`gulp-htmlmin`);
+const minify = require(`gulp-csso`);
+const rename = require(`gulp-rename`);
+const imagemin = require(`gulp-imagemin`);
+const include = require(`posthtml-include`);
+const del = require(`del`);
+const uglify = require(`gulp-uglify`);
+const server = require(`browser-sync`).create();
 
-gulp.task("style", function () {
-  gulp.src("source/sass/style.scss")
+gulp.task(`style`, () =>
+  gulp.src(`source/sass/style.scss`)
     .pipe(plumber())
+    .pipe(sourcemap.init())
     .pipe(sass())
     .pipe(postcss([
       autoprefixer()
     ]))
-    .pipe(gulp.dest("docs/css"))
     .pipe(minify())
-    .pipe(rename("style.min.css"))
-    .pipe(gulp.dest("docs/css"))
-    .pipe(server.stream());
-});
+    .pipe(rename(`style.min.css`))
+    .pipe(gulp.dest(`docs/css`))
+    .pipe(rename(`style.css`))
+    .pipe(sourcemap.write(`.`))
+    .pipe(gulp.dest(`docs/css`))
+    .pipe(server.stream())
+);
 
-gulp.task("gulp-uglify", function(){
-  gulp.src("source/js/script.js")
+gulp.task(`gulp-uglify`, () =>
+  gulp.src(`source/js/script.js`)
     .pipe(uglify())
-    .pipe(rename("script.min.js"))
-    .pipe(gulp.dest("docs/js"))
-});
+    .pipe(rename(`script.min.js`))
+    .pipe(gulp.dest(`docs/js`))
+);
 
-gulp.task("images", function () {
-  return gulp.src(["source/img/**/*.{png,jpg,svg}", "!source/img/sprite.svg"])
+gulp.task(`images`, () =>
+  gulp.src([`source/img/**/*.{png,jpg,svg}`, `!source/img/sprite.svg`])
     .pipe(imagemin([
       imagemin.optipng({optimizationLevel: 3}),
       imagemin.jpegtran({progressive: true}),
       imagemin.svgo()
     ]))
-    .pipe(gulp.dest("docs/img"));
-});
+    .pipe(gulp.dest(`docs/img`))
+);
 
-gulp.task("webp", function () {
-  return gulp.src(["source/img/**/*.{png,jpg}", "!source/img/favicon/**"])
-    .pipe(webp({quality: 90}))
-    .pipe(gulp.dest("docs/img"));
-});
-
-gulp.task("html", function () {
-  return gulp.src("source/*html")
+gulp.task(`html`, () =>
+  gulp.src(`source/*html`)
     .pipe(posthtml([
       include()
     ]))
-    .pipe(gulp.dest("docs"));
-});
+    .pipe(gulp.dest(`docs`))
+);
 
-gulp.task("minify", function() {
-  return gulp.src('source/*.html')
+gulp.task(`minify`, () =>
+  gulp.src(`source/*.html`)
     .pipe(htmlmin({collapseWhitespace: true}))
-    .pipe(gulp.dest("docs"));
-});
+    .pipe(gulp.dest(`docs`))
+);
 
-gulp.task("serve", function () {
+gulp.task(`serve`, () => {
   server.init({
-    server: "docs/",
+    server: `docs/`,
     notify: false,
-    open: true,
+    open: false,
     cors: true,
     ui: false
   });
 
-  gulp.watch("source/sass/**/*.{scss,sass}", ["style"]);
-  gulp.watch("source/*.html", ["html"]);
-  gulp.watch("source/*.html").on("change", server.reload);
+  gulp.watch(`source/sass/**/*.{scss,sass}`, gulp.series(`style`));
+  gulp.watch(`source/*.html`, gulp.series(`html`));
+  gulp.watch(`source/*.html`).on(`change`, server.reload);
 });
 
-gulp.task("copy", function () {
-  return gulp.src([
-    "source/fonts/**/*.{woff,woff2}",
-    "source/img/**",
-    "source/js/**"
+gulp.task(`copy`, () =>
+  gulp.src([
+    `source/fonts/**/*.{woff,woff2}`,
+    `source/img/**`,
+    `source/js/**`
   ], {
-    base: "source"
+    base: `source`
   })
-    .pipe(gulp.dest("docs"));
-});
+    .pipe(gulp.dest(`docs`))
+);
 
-gulp.task("build", function (done) {
-  run(
-    "clean",
-    "copy",
-    "style",
-    "gulp-uglify",
-    "images",
-    "webp",
-    "html",
-    // "minify",
-    done
-  );
-});
+gulp.task(`clean`, () => del(`docs`));
 
-gulp.task("clean", function () {
-  return del("docs");
-});
+gulp.task(`build`, gulp.series(`clean`, `copy`, `style`, `gulp-uglify`, `images`, `html`));
